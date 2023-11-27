@@ -1,0 +1,253 @@
+/* body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    background-color: #333;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5em;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+}
+
+.dropdown {
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #333;
+    min-width: 160px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    display: block;
+    text-decoration: none;
+}
+
+.dropdown-content a:hover {
+    background-color: #555;
+}
+
+.search-icon img {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.search-bar {
+    display: none;
+}
+
+.search-bar input {
+    padding: 5px;
+}
+
+.content {
+    padding: 20px;
+} */
+
+
+
+
+.list-group{
+	width: 400px !important;
+
+}
+
+.list-group-item{
+	margin-top:10px;
+	border-radius: none; 
+	background: #5E35B1;
+	cursor: pointer;
+	transition: all 0.3s ease-in-out;
+}
+
+
+.list-group-item:hover{
+	transform: scaleX(1.1);
+}
+
+.about span{
+	font-size: 20px;
+	margin-right: 10px;
+
+}
+
+
+ 
+/* modal css */
+
+/* Your existing CSS styles */
+
+/* Additional styles for the modal and overlay */
+.modal {
+    color: white;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid #ffffff59;
+    width: 500px;
+    background: #00000088;
+    padding: 20px 25px;
+    border-radius: 20px;
+    transition: 0.5s ease-in-out;
+    backdrop-filter: blur(10px);
+    z-index: 1;
+    display: none; /* Initially hidden */
+}
+
+.modalHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #ffffff88;
+}
+
+.modalHeader span {
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.overlay {
+    position: fixed;
+    background-color: rgba(226, 222, 222, 0.514);
+    top: 0;
+    opacity: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    transition: 0.5s ease-in-out;
+    display: none; /* Initially hidden */
+}
+
+.overlayActive {
+    opacity: 1;
+    pointer-events: initial;
+}
+
+/* 
+.modal {
+    color: white;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    border: 2px solid #ffffff59;
+    width: 500px;
+    scale: 0;
+    background: #00000088;
+    padding: 20px 25px;
+    border-radius: 20px;
+    transition: 0.5s ease-in-out;
+    backdrop-filter: blur(10px);
+    z-index: 1;
+  }
+  
+  .modalHeader{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #ffffff88;
+  }
+   */
+  .modalHeader div i{
+    font-size: 30px;
+    cursor: pointer;
+  }
+  
+  .iconContainer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .icon{  
+    padding: 17px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0px;
+    gap: 10px;
+    justify-content: center;
+    transition: all 0.5s;
+    margin-bottom: 25px;
+    text-decoration: none;
+  }
+  
+  .icon i {
+    font-size: 27px;
+  }
+  
+  #facebook {
+    color: #1771e6;
+    border: 1px solid #1771e6;
+  }
+  #facebook:hover {
+    background-color: #1771e6;
+    color: #fff;
+  }
+  
+
+  
+  .active {
+    scale: 1;
+  }
+  
+  .overlay {
+    position: fixed;
+    background-color: #e8e7e783;
+    top: 0;
+    opacity: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    transition: 0.5s ease-in-out;
+  }
+  .overlayActive {
+    opacity: 1;
+    pointer-events: initial;
+  }
+
+  
