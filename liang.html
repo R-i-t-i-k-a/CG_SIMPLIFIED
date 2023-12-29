@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liang-Barsky Line Clipping</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+            width: 30%;
+            margin-right:10px;;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+            display: block;
+            width: 30%;
+           
+        }
+
+        label {
+            display: inline-block;
+            width: 30px;
+            margin-right: 10px;
+
+        }
+
+        input {
+            width: 60px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #17479f;
+        }
+
+        #solution {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            width: 35%;
+            padding: 10px;
+            letter-spacing: 0.25px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+  
+    <form id="lineForm">
+        <h2>Enter line endpoints (x1, y1) and (x2, y2)</h2>
+        <label for="x1">x1:</label>
+        <input type="number" id="x1" required>
+        <br>
+        <label for="y1">y1:</label>
+        <input type="number" id="y1" required>
+        <br>
+        <label for="x2">x2:</label>
+        <input type="number" id="x2" required>
+        <br>
+        <label for="y2">y2:</label>
+        <input type="number" id="y2" required>
+        <br>
+        <h2>Enter window coordinates (xmin, ymin, xmax, ymax)</h2>
+        <label for="xmin">xmin:</label>
+        <input type="number" id="xmin" required>
+        <br>
+        <label for="ymin">ymin:</label>
+        <input type="number" id="ymin" required>
+        <br>
+        <label for="xmax">xmax:</label>
+        <input type="number" id="xmax" required>
+        <br>
+        <label for="ymax">ymax:</label>
+        <input type="number" id="ymax" required>
+        <br>
+        <button type="button" onclick="clipLine()">Clip Line</button>
+    </form>
+  
+
+    <canvas id="canvas" width="600" height="600"></canvas>
+
+    <div id="solution"></div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const solutionDiv = document.getElementById('solution');
+
+// Function to draw a line on the canvas
+function drawLine(x1, y1, x2, y2, color) {
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = color;
+    ctx.stroke();
+}
+
+// Function to draw the clipping window
+function drawClippingWindow(xmin, ymin, xmax, ymax) {
+    drawLine(xmin, ymin, xmax, ymin, 'black');
+    drawLine(xmax, ymin, xmax, ymax, 'black');
+    drawLine(xmax, ymax, xmin, ymax, 'black');
+    drawLine(xmin, ymax, xmin, ymin, 'black');
+}
+
+// Function to display steps in the solution div
+function displayStep(stepText) {
+    const stepDiv = document.createElement('div');
+    stepDiv.classList.add('step');
+    stepDiv.textContent = stepText;
+    solutionDiv.appendChild(stepDiv);
+
+    // Add a horizontal line after each step
+    const hr = document.createElement('hr');
+    solutionDiv.appendChild(hr);
+}
+
+// Liang-Barsky Clipping Function
+function clipLine() {
+    // Clear previous drawings and solution information
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    solutionDiv.innerHTML = '';
+
+    // Get input values
+    const x1 = parseFloat(document.getElementById('x1').value);
+    const y1 = parseFloat(document.getElementById('y1').value);
+    const x2 = parseFloat(document.getElementById('x2').value);
+    const y2 = parseFloat(document.getElementById('y2').value);
+
+    const xmin = parseFloat(document.getElementById('xmin').value);
+    const ymin = parseFloat(document.getElementById('ymin').value);
+    const xmax = parseFloat(document.getElementById('xmax').value);
+    const ymax = parseFloat(document.getElementById('ymax').value);
+
+    // Draw the clipping window
+    drawClippingWindow(xmin, ymin, xmax, ymax);
+
+    // Draw the original line
+    drawLine(x1, y1, x2, y2, 'blue');
+
+    // Calculate direction vector of the line
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    displayStep('SOLUTION');
+    // Display Step 1
+    displayStep('Step 1: Get Input Values and Calculate Direction Vector');
+    displayStep(`   Direction Vector (dx, dy): (${dx}, ${dy})`);
+
+    // Initialize parameters for intersection calculation
+    let t1 = 0;
+    let t2 = 1;
+
+    // Display Step 2
+    displayStep('Step 2: Initialize Parameters for Intersection Calculation');
+    displayStep(`   Intersection Parameters (t1, t2): (${t1}, ${t2})`);
+
+    // Perform Liang-Barsky line clipping
+    for (let i = 0; i < 4; i++) {
+        let p, q;
+
+        // Set values based on the current clipping boundary
+        switch (i) {
+            case 0:
+                p = -dx;
+                q = -(xmin - x1);
+                break;
+            case 1:
+                p = dx;
+                q = (xmax - x1);
+                break;
+            case 2:
+                p = -dy;
+                q = -(ymin - y1);
+                break;
+            case 3:
+                p = dy;
+                q = (ymax - y1);
+                break;
+        }
+
+        // Calculate the intersection parameter
+        const r = q / p;
+
+        // Check conditions and update intersection parameters
+        if (p === 0 && q < 0) {
+            // Line is parallel to the clipping boundary and outside the window
+            return;
+        }
+
+        if (p < 0) {
+            if (r > t2) {
+                // Line is outside the window
+                return;
+            } else if (r > t1) {
+                // Update the intersection parameter
+                t1 = r;
+            }
+        } else if (p > 0) {
+            if (r < t1) {
+                // Line is outside the window
+                return;
+            } else if (r < t2) {
+                // Update the intersection parameter
+                t2 = r;
+            }
+        }
+
+        // Display Step 3
+        displayStep('Step 3: Perform Liang-Barsky Line Clipping');
+        displayStep(`   Current Clipping Boundary: ${i + 1}`);
+        displayStep(`   Intersection Parameter (r): ${r}`);
+        displayStep(`   Updated Parameters (t1, t2): (${t1}, ${t2})`);
+    }
+
+    // Calculate clipped endpoints
+    const x1Clip = x1 + t1 * dx;
+    const y1Clip = y1 + t1 * dy;
+    const x2Clip = x1 + t2 * dx;
+    const y2Clip = y1 + t2 * dy;
+
+    // Display Step 4
+    displayStep('Step 4: Calculate Clipped Endpoints');
+    displayStep(`   Clipped Endpoints: (${x1Clip}, ${y1Clip}) and (${x2Clip}, ${y2Clip})`);
+
+    // Draw the clipped line
+    drawLine(x1Clip, y1Clip, x2Clip, y2Clip, 'red');
+}
+    </script>
+</body>
+</html>

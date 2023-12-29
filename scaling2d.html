@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Translation Transformation</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+            display: block;
+        }
+
+        label {
+            display: inline-block;
+            width: 70px;
+        }
+
+        input {
+            width: 50px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #17479f;
+        }
+
+        #solutionSection {
+            display: none;
+            margin-left: 70px;
+            margin-top: 20px;
+        }
+
+        #solution {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            margin-right: 20px;
+            margin-top: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 3px solid #466baf;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #c5d4f1;
+            color: rgb(0, 0, 0);
+        }
+        #shapeChoice {
+            margin-right: 20px;
+        }
+
+        .shape-input {
+            display: none;
+        }
+
+    .matrix {
+        display: table;
+        border-collapse: collapse;
+        margin: 10px 0;
+    }
+
+    .row {
+        display: table-row;
+    }
+
+    .cell {
+        display: table-cell;
+        border: 1px solid #ccc;
+        padding: 5px 10px;
+        text-align: center;
+    }
+    </style>
+</head>
+<body>
+    <form id="pointForm">
+        <h2>Choose a Shape</h2>
+        <label for="shapeChoice">Select Shape:</label>
+        <select id="shapeChoice" onchange="showShapeInput()">
+            <option value="polygon">choose</option>
+            <option value="polygon">Polygon</option>
+        </select>
+
+        <!-- Polygon input fields -->
+        <div id="polygonInput" class="shape-input">
+            <label for="numSides">Number of Sides:</label>
+            <input type="number" id="numSides" required>
+            <br>
+            <!-- Add additional input fields for polygon coordinates dynamically using JavaScript -->
+            <div id="coordinateInputs" class="coordinate-input"></div>
+        </div>
+
+        <!-- Circle input fields -->
+        <div id="circleInput" class="shape-input">
+            <label for="centerX">Center X:</label>
+            <input type="number" id="centerX" required>
+            <br>
+            <label for="centerY">Center Y:</label>
+            <input type="number" id="centerY" required>
+            <br>
+            <label for="radius">Radius:</label>
+            <input type="number" id="radius" required>
+        </div>
+
+        <!-- Your existing input fields for scale -->
+        <label for="scaleX">scale X:</label>
+        <input type="number" id="scaleX" required>
+        <br>
+        <label for="scaleY">scale Y:</label>
+        <input type="number" id="scaleY" required>
+        <br>
+
+        <button type="button" onclick="showSolution()">Show Solution</button>
+    </form>
+
+    <div id="solutionSection">
+        <div id="solution"></div>
+        <div id="tableContainer"></div>
+    </div>
+    
+    <script>
+        function showShapeInput() {
+            var shapeChoice = document.getElementById("shapeChoice").value;
+            var polygonInput = document.getElementById("polygonInput");
+            var circleInput = document.getElementById("circleInput");
+        
+            if (shapeChoice === "polygon") {
+                polygonInput.style.display = "block";
+                circleInput.style.display = "none";
+            } else if (shapeChoice === "circle") {
+                polygonInput.style.display = "none";
+                circleInput.style.display = "block";
+            }
+        }
+        document.getElementById("numSides").addEventListener("input", generateCoordinateInputs);
+        
+        function generateCoordinateInputs() {
+            var numSides = document.getElementById("numSides").value;
+            var coordinateInputs = document.getElementById("coordinateInputs");
+        
+            // Clear existing input fields
+            coordinateInputs.innerHTML = "";
+        
+            // Generate input fields for x and y coordinates
+            for (var i = 0; i < numSides; i++) {
+                var labelX = document.createElement("label");
+                labelX.textContent = "X" + (i + 1) + ":";
+        
+                var inputX = document.createElement("input");
+                inputX.type = "number";
+                inputX.className = "coordinate-input";
+                inputX.name = "x" + (i + 1);
+                inputX.required = true;
+        
+                var labelY = document.createElement("label");
+                labelY.textContent = "Y" + (i + 1) + ":";
+        
+                var inputY = document.createElement("input");
+                inputY.type = "number";
+                inputY.className = "coordinate-input";
+                inputY.name = "y" + (i + 1);
+                inputY.required = true;
+        
+                coordinateInputs.appendChild(labelX);
+                coordinateInputs.appendChild(inputX);
+                coordinateInputs.appendChild(document.createElement("br"));
+                coordinateInputs.appendChild(labelY);
+                coordinateInputs.appendChild(inputY);
+                coordinateInputs.appendChild(document.createElement("br"));
+            }
+        
+            // Display the coordinate inputs
+            coordinateInputs.style.display = "block";
+        }
+        
+        function showSolution() {
+            // Get the selected shape from the HTML form
+            var shape = document.getElementById("shapeChoice").value.toLowerCase();
+        
+            // Get input values based on the shape
+            var originalX, originalY, scaleX, scaleY;
+        
+            switch (shape) {
+                case 'polygon':
+                    var numSides = parseInt(document.getElementById("numSides").value);
+                    var polygonCoordinates = [];
+        
+                    for (var i = 1; i <= numSides; i++) {
+                        var x = parseInt(document.getElementsByName("x" + i)[0].value);
+                        var y = parseInt(document.getElementsByName("y" + i)[0].value);
+                        polygonCoordinates.push({ x: x, y: y });
+                    }
+        
+                    originalX = polygonCoordinates[0].x;
+                    originalY = polygonCoordinates[0].y;
+        
+                    break;
+        
+                case 'circle':
+                    originalX = parseInt(document.getElementById("centerX").value);
+                    originalY = parseInt(document.getElementById("centerY").value);
+                    break;
+        
+                default:
+                    alert("Invalid shape selected. Please choose polygon or circle.");
+                    return;
+            }
+        
+            // Get scale values
+            scaleX = parseInt(document.getElementById("scaleX").value);
+            scaleY = parseInt(document.getElementById("scaleY").value);
+        
+            // Perform 2D scale transformation for each coordinate
+            var transformedCoordinates = [];
+        
+            switch (shape) {
+                case 'polygon':
+                    for (var i = 0; i < numSides; i++) {
+                        var scaledX = (polygonCoordinates[i].x - originalX) * scaleX + originalX;
+                        var scaledY = (polygonCoordinates[i].y - originalY) * scaleY + originalY;
+                        transformedCoordinates.push({ x: scaledX, y: scaledY });
+                    }
+                    break;
+        
+                case 'circle':
+                    transformedCoordinates.push({
+                        x: originalX + scaleX,
+                        y: originalY + scaleY
+                    });
+                    break;
+            }
+        
+            // Display the solution
+            var solutionDiv = document.getElementById('solution');
+            solutionDiv.innerHTML = "<h3>2D Scaling Transformation Solution:</h3>";
+            
+            // Display inputs
+            solutionDiv.innerHTML += "<p><strong>Inputs:</strong></p>";
+            solutionDiv.innerHTML += "<p><strong>Shape:</strong> " + shape + "</p>";
+            for(var i=0;i<transformedCoordinates.length;i++){
+                solutionDiv.innerHTML += "<p><strong>Original Coordinate "+(i+1)+" :</strong> (" + polygonCoordinates[0].x + ", " + polygonCoordinates[0].y + ")</p>";
+            }
+            solutionDiv.innerHTML += "<p><strong>Scaling factors:</strong> (" + scaleX + ", " + scaleY + ")</p>";
+        
+            // Display scale matrix
+            solutionDiv.innerHTML += "<p><strong>Scaling Matrix:</strong></p>";
+            solutionDiv.innerHTML += "<div class='matrix'>";
+            solutionDiv.innerHTML += "<div class='row'><div class='cell'>scaleX</div><div class='cell'>0</div></div>";
+            solutionDiv.innerHTML += "<div class='row'><div class='cell'>0</div><div class='cell'>scaleY</div></div>";
+            solutionDiv.innerHTML += "</div>";
+            
+            // Display scale matrix
+            solutionDiv.innerHTML += "<p><strong>Scaling Matrix:</strong></p>";
+            solutionDiv.innerHTML += "<div class='matrix'>";
+            solutionDiv.innerHTML += "<div class='row'><div class='cell'>" + scaleX.toFixed(2) + "</div><div class='cell'>0</div></div>";
+            solutionDiv.innerHTML += "<div class='row'><div class='cell'>0</div><div class='cell'>" + scaleY.toFixed(2) + "</div></div>";
+            solutionDiv.innerHTML += "</div>";
+        
+        
+            // Display the transformed coordinates
+            var table="<h3>Table for the transformed coorrdinates:</h3><table>";
+            table += "<tr><th>Original X</th><th>Original Y</th><th>Transformed X</th><th>Transformed Y</th></tr>";
+        
+            for (var i = 0; i < transformedCoordinates.length; i++) {
+                table += "<tr><td>" + polygonCoordinates[0].x + "</td><td>" + polygonCoordinates[0].y + "</td><td>" + transformedCoordinates[i].x + "</td><td>" + transformedCoordinates[i].y + "</td></tr>";
+            }
+        
+            table += "</table>";
+        
+            // Create a canvas for graphical representation
+            solutionDiv.innerHTML += "<h3>Graphical Representation:</h3>";
+            var canvas = document.createElement('canvas');
+            canvas.width = 400;
+            canvas.height = 400;
+            canvas.style.border = '2px solid #000';
+            solutionDiv.appendChild(canvas);
+        
+            // Draw the shape before scale
+            drawShape(canvas, originalX, originalY, polygonCoordinates);
+        
+            // Draw the shape after scale
+            drawShape(canvas, scaleX, scaleY, transformedCoordinates);
+        
+            //append the table to the tableContainer div
+            document.getElementById('tableContainer').innerHTML = table;
+            // Hide the form and display the solution section
+            document.getElementById('pointForm').style.display = 'none';
+            document.getElementById('solutionSection').style.display = 'flex';
+        }
+        function drawShape(canvas, offsetX, offsetY, coordinates, label) {
+            var ctx = canvas.getContext('2d');
+        
+            ctx.beginPath();
+            ctx.moveTo(coordinates[0].x + offsetX, coordinates[0].y + offsetY);
+        
+            // Draw each coordinate and label
+            for (var i = 0; i < coordinates.length; i++) {
+                ctx.lineTo(coordinates[i].x + offsetX, coordinates[i].y + offsetY);
+                ctx.fillText(' (' + coordinates[i].x + ', ' + coordinates[i].y + ')', coordinates[i].x + offsetX, coordinates[i].y + offsetY - 5);
+            }
+        
+            ctx.strokeStyle = label === 'Original' ? 'blue' : 'red';
+            ctx.closePath();
+            ctx.stroke();
+        }
+    </script>
+
+</body>
+</html>

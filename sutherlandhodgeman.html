@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sutherland-Hodgman Polygon Clipping</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+            display: block;
+        }
+
+        label {
+            display: inline-block;
+            width: 30px;
+        }
+
+        input {
+            width: 60px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #17479f;
+        }
+
+        #solution {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <form id="polygonForm">
+        <h2>Enter polygon vertices (x, y)</h2>
+        <label for="x1">x1:</label>
+        <input type="number" id="x1" required>
+        <br>
+        <label for="y1">y1:</label>
+        <input type="number" id="y1" required>
+        <br>
+        <label for="x2">x2:</label>
+        <input type="number" id="x2" required>
+        <br>
+        <label for="y2">y2:</label>
+        <input type="number" id="y2" required>
+        <br>
+        <!-- Add more vertices as needed -->
+        <button type="button" onclick="clipPolygon()">Clip Polygon</button>
+    </form>
+
+    <canvas id="canvas" width="400" height="400"></canvas>
+
+    <div id="solution"></div>
+
+    <script>
+        const canvas = document.getElementById("canvas");
+        function drawPolygon(vertices, color) {
+            var ctx = document.getElementById('canvas').getContext('2d');
+            ctx.beginPath();
+            ctx.moveTo(vertices[0][0], vertices[0][1]);
+            for (var i = 1; i < vertices.length; i++) {
+                ctx.lineTo(vertices[i][0], vertices[i][1]);
+            }
+            ctx.closePath();
+            ctx.strokeStyle = color;
+            ctx.stroke();
+        }
+
+        function displayStep(step) {
+            var solutionDiv = document.getElementById('solution');
+            var stepDiv = document.createElement('div');
+            stepDiv.innerHTML = step;
+            solutionDiv.appendChild(stepDiv);
+        }
+
+        function clipPolygon() {
+            var canvas = document.getElementById('canvas');
+            var ctx = canvas.getContext('2d');
+            var solutionDiv = document.getElementById('solution');
+
+            // Clear previous drawings
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            solutionDiv.innerHTML = '';
+
+            // Get input values
+            var x1 = parseInt(document.getElementById('x1').value);
+            var y1 = parseInt(document.getElementById('y1').value);
+            var x2 = parseInt(document.getElementById('x2').value);
+            var y2 = parseInt(document.getElementById('y2').value);
+            // Add more vertices as needed
+
+            // Define the polygon vertices
+            var polygonVertices = [
+                [x1, y1],
+                [x2, y2],
+                // Add more vertices as needed
+            ];
+
+            // Draw the original polygon
+            drawPolygon(polygonVertices, 'blue');
+
+            // Define the clipping window
+            var xmin = /* Set your xmin */;
+            var ymin = /* Set your ymin */;
+            var xmax = /* Set your xmax */;
+            var ymax = /* Set your ymax */;
+
+            // Draw the clipping window
+            drawPolygon([
+                [xmin, ymin],
+                [xmax, ymin],
+                [xmax, ymax],
+                [xmin, ymax],
+            ], 'black');
+
+            // Perform Sutherland-Hodgman polygon clipping
+            var clippedVertices = sutherlandHodgman(polygonVertices, xmin, ymin, xmax, ymax);
+
+            // Draw the clipped polygon
+            drawPolygon(clippedVertices, 'red');
+        }
+
+        function sutherlandHodgman(vertices, xmin, ymin, xmax, ymax) {
+            var result = [];
+            var n = vertices.length;
+
+            for (var i = 0; i < n; i++) {
+                var currentVertex = vertices[i];
+                var nextVertex = vertices[(i + 1) % n];
+
+                // Check if the current edge is inside or outside the clip window
+                var isStartInside = inside(currentVertex, xmin, ymin, xmax, ymax);
+                var isNextInside = inside(nextVertex, xmin, ymin, xmax, ymax);
+
+                if (isStartInside && isNextInside) {
+                    // Case 1: Both vertices are inside, add the next vertex
+                    result.push(nextVertex);
+                } else if (isStartInside && !isNextInside) {
+                    // Case 2: Start inside, end outside, add intersection point
+                    result.push(intersect(currentVertex, nextVertex, xmin, ymin, xmax, ymax));
+                } else if (!isStartInside && isNextInside) {
+                    // Case 3: Start outside, end inside, add intersection point and the next vertex
+                    result.push(intersect(currentVertex, nextVertex, xmin, ymin, xmax, ymax));
+                    result.push(nextVertex);
+                }
+                // Case 4: Both vertices are outside, do nothing
+            }
+
+            return result;
+        }
+
+        function inside(vertex, xmin, ymin, xmax, ymax) {
+            return (
+                vertex[0] >= xmin &&
+                vertex[0] <= xmax &&
+                vertex[1] >= ymin &&
+                vertex[1] <= ymax
+            );
+        }
+
+        function intersect(currentVertex, nextVertex, xmin, ymin, xmax, ymax) {
+            var intersectX, intersectY;
+            var m = (nextVertex[1] - currentVertex[1]) / (nextVertex[0] - currentVertex[0]);
+
+            if (currentVertex[0] < xmin || currentVertex[0] > xmax) {
+                // Intersection with left or right edge
+                intersectX = currentVertex[0] < xmin ? xmin : xmax;
+                intersectY = currentVertex[1] + m * (intersectX - currentVertex[0]);
+            } else {
+                // Intersection with top or bottom edge
+                intersectY = currentVertex[1] < ymin ? ymin : ymax;
+                intersectX = currentVertex[0] + (intersectY - currentVertex[1]) / m;
+            }
+
+            return [intersectX, intersectY];
+        }
+    </script>
+</body>
+</html>

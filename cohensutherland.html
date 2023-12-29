@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cohen Sutherland Line Clipping</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100vw;
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-right: 10px;
+            display: block;
+            margin-left: 10px;
+        }
+
+        label {
+            display: inline-block;
+            width: 30px;
+            margin-right: 10px;
+        }
+
+        input {
+            width: 60px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #17479f;
+        }
+
+        #solution {
+            margin-left: 30px;
+            margin-top: 20px;
+            width: 30%;
+        }
+    </style>
+</head>
+<body>
+    <form id="lineForm">
+        <h2>Enter line endpoints (x1, y1) and (x2, y2)</h2>
+        <label for="x1">x1:</label>
+        <input type="number" id="x1" required>
+        <br>
+        <label for="y1">y1:</label>
+        <input type="number" id="y1" required>
+        <br>
+        <label for="x2">x2:</label>
+        <input type="number" id="x2" required>
+        <br>
+        <label for="y2">y2:</label>
+        <input type="number" id="y2" required>
+        <br>
+        <h2>Enter window coordinates (xmin, ymin, xmax, ymax)</h2>
+        <label for="xmin">xmin:</label>
+        <input type="number" id="xmin" required>
+        <br>
+        <label for="ymin">ymin:</label>
+        <input type="number" id="ymin" required>
+        <br>
+        <label for="xmax">xmax:</label>
+        <input type="number" id="xmax" required>
+        <br>
+        <label for="ymax">ymax:</label>
+        <input type="number" id="ymax" required>
+        <br>
+        <button type="button" onclick="clipLine()">Clip Line</button>
+    </form>
+
+    <canvas id="canvas" width="400" height="400"></canvas>
+
+    <div id="solution"></div>
+
+    <script>
+        function drawLine(x1, y1, x2, y2, color) {
+            var ctx = document.getElementById('canvas').getContext('2d');
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = color;
+            ctx.stroke();
+        }
+
+        function displayStep(step) {
+            var solutionDiv = document.getElementById('solution');
+            var stepDiv = document.createElement('div');
+            stepDiv.innerHTML = step;
+            solutionDiv.appendChild(stepDiv);
+        }
+
+        function clipLine() {
+            var canvas = document.getElementById('canvas');
+            var ctx = canvas.getContext('2d');
+            var solutionDiv = document.getElementById('solution');
+
+            // Clear previous drawings
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            solutionDiv.innerHTML = '';
+
+            // Get input values
+            var x1 = parseInt(document.getElementById('x1').value);
+            var y1 = parseInt(document.getElementById('y1').value);
+            var x2 = parseInt(document.getElementById('x2').value);
+            var y2 = parseInt(document.getElementById('y2').value);
+
+            var xmin = parseInt(document.getElementById('xmin').value);
+            var ymin = parseInt(document.getElementById('ymin').value);
+            var xmax = parseInt(document.getElementById('xmax').value);
+            var ymax = parseInt(document.getElementById('ymax').value);
+
+            // Draw the window
+            drawLine(xmin, ymin, xmax, ymin, 'black');
+            drawLine(xmax, ymin, xmax, ymax, 'black');
+            drawLine(xmax, ymax, xmin, ymax, 'black');
+            drawLine(xmin, ymax, xmin, ymin, 'black');
+
+            // Draw the original line
+            drawLine(x1, y1, x2, y2, 'blue');
+
+            // Perform Nicholl-Lee-Nicholl line clipping
+            var dx = x2 - x1;
+            var dy = y2 - y1;
+            var tE = 0;
+            var tL = 1;
+
+            // Calculate parameters
+            var p, q, r;
+            for (var i = 0; i < 4; i++) {
+                if (i === 0) {
+                    p = -dx;
+                    q = -(xmin - x1);
+                } else if (i === 1) {
+                    p = dx;
+                    q = xmax - x1;
+                } else if (i === 2) {
+                    p = -dy;
+                    q = -(ymin - y1);
+                } else if (i === 3) {
+                    p = dy;
+                    q = ymax - y1;
+                }
+
+                r = q / p;
+
+                if (p === 0 && q < 0) {
+                    // Line is parallel to the clipping boundary and outside
+                    displayStep("<p>Line is parallel to boundary " + i + " and outside</p>");
+                    return;
+                }
+
+                if (p < 0) {
+                    if (r > tL) {
+                        // Line is outside of the clipping boundary
+                        displayStep("<p>Line is outside of the boundary " + i + "</p>");
+                        return;
+                    } else if (r > tE) {
+                        tE = r;
+                    }
+                } else if (p > 0) {
+                    if (r < tE) {
+                        // Line is outside of the clipping boundary
+                        displayStep("<p>Line is outside of the boundary " + i + "</p>");
+                        return;
+                    } else if (r < tL) {
+                        tL = r;
+                    }
+                }
+
+                // Display the current parameters
+                displayStep("<hr>");
+                displayStep("<h3>Iteration " + (i + 1) + "</h3>");
+                displayStep("<p>p = " + p + ", q = " + q + ", r = " + r + "</p>");
+                displayStep("<p>tE = " + tE + ", tL = " + tL + "</p>");
+            }
+
+            // Calculate the clipped line coordinates
+            var xE = Math.round(x1 + tE * dx);
+            var yE = Math.round(y1 + tE * dy);
+            var xL = Math.round(x1 + tL * dx);
+            var yL = Math.round(y1 + tL * dy);
+
+            // Display the final clipped line
+            displayStep("<hr>");
+            displayStep("<h3>Final Result</h3>");
+            displayStep("<p>Clipped line endpoints: (" + xE + ", " + yE + ") and (" + xL + ", " + yL + ")</p>");
+
+            // Draw the clipped line
+            drawLine(xE, yE, xL, yL, 'red');
+        }
+    </script>
+</body>
+</html>

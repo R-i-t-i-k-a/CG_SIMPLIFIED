@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bresenham's Line Drawing Algorithm</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+            display: block;
+            
+        }
+
+        label {
+            display: inline-block;
+            width: 30px;
+        }
+
+        input {
+            width: 60px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #17479f;
+        }
+
+        #solutionSection {
+            display: none;
+        }
+
+        #solution {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            margin-right: 20px;
+            margin-top: 3vh;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+          
+            margin-top: 3vh;
+        }
+
+        th, td {
+            border: 5px solid #466baf;
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #c5d4f1;
+            color: rgb(0, 0, 0);
+        }
+    </style>
+</head>
+<body>
+    <form id="pointForm">
+        <h2>Enter the coordinates of two points (x1, y1) and (x2, y2)</h2>
+        <label for="x1">x1:</label>
+        <input type="number" id="x1" required>
+        <br>
+        <label for="y1">y1:</label>
+        <input type="number" id="y1" required>
+        <br>
+        <label for="x2">x2:</label>
+        <input type="number" id="x2" required>
+        <br>
+        <label for="y2">y2:</label>
+        <input type="number" id="y2" required>
+        <br>
+        <button type="button" onclick="showSolution()">Show Solution</button>
+    </form>
+
+    <div id="solutionSection">
+        <div id="solution"></div>
+        <div id="tableContainer"></div>
+    </div>
+
+    <script>
+       function showSolution() {
+    // Get input values
+    var x1 = parseInt(document.getElementById('x1').value);
+    var y1 = parseInt(document.getElementById('y1').value);
+    var x2 = parseInt(document.getElementById('x2').value);
+    var y2 = parseInt(document.getElementById('y2').value);
+
+    // Bresenham's Line Drawing Algorithm
+    var dx = Math.abs(x2 - x1);
+    var dy = Math.abs(y2 - y1);
+    var slope = dy > dx;
+
+    if (slope) {
+        [x1, y1] = [y1, x1];
+        [x2, y2] = [y2, x2];
+    }
+
+    if (x1 > x2) {
+        [x1, x2] = [x2, x1];
+        [y1, y2] = [y2, y1];
+    }
+
+    var dx1 = x2 - x1;
+    var dy1 = Math.abs(y2 - y1);
+    var twoDy1 = 2 * dy1;
+    var twoDy1MinusDx1 = 2 * (dy1 - dx1);
+    var p = twoDy1 - dx1;
+    var x = x1;
+    var y = y1;
+
+    // Display the solution
+    var solutionDiv = document.getElementById('solution');
+    solutionDiv.innerHTML = "<h3>Bresenham's Line Drawing Algorithm Solution:</h3>";
+    solutionDiv.innerHTML += "<p>Given input points: (" + x1 + ", " + y1 + ") and (" + x2 + ", " + y2 + ")</p>";
+    solutionDiv.innerHTML += "<p>Calculate dx = |" + x2 + " - " + x1 + "| = " + dx + "</p>";
+    solutionDiv.innerHTML += "<p>Calculate dy = |" + y2 + " - " + y1 + "| = " + dy + "</p>";
+    solutionDiv.innerHTML += "<p>Slope: " + (slope ? "dy > dx" : "dx >= dy") + "</p>";
+
+    // Initialize the loop
+    solutionDiv.innerHTML += "<p>Initialize parameters:</p>";
+    solutionDiv.innerHTML += "<p>p = 2 * dy - dx = 2 * " + dy + " - " + dx + " = " + p + "</p>";
+    solutionDiv.innerHTML += "<p>x = " + x1 + ", y = " + y1 + "</p>";
+
+    // Continue the loop
+    while (x < x2) {
+        x++;
+
+        // Calculate decision parameter
+        solutionDiv.innerHTML += "<hr>";
+
+        solutionDiv.innerHTML += "<p>Calculate decision parameter (p):</p>";
+        solutionDiv.innerHTML += "<p>p = " + p + "</p>";
+
+        if (p < 0) {
+            // Decision parameter is less than 0
+            solutionDiv.innerHTML += "<p>Since p < 0, update p = p + 2 * dy = " + p + " + 2 * " + dy + " = " + (p + twoDy1) + "</p>";
+            p += twoDy1;
+
+            // Update x
+            solutionDiv.innerHTML += "<p>Update x = " + x + "</p>";
+        } else {
+            // Decision parameter is greater than or equal to 0
+            solutionDiv.innerHTML += "<p>Since p >= 0, update p = p + 2 * dy - 2 * dx = " + p + " + 2 * " + dy + " - 2 * " + dx + " = " + (p + twoDy1MinusDx1) + "</p>";
+
+            if (y1 < y2) {
+                y++;
+            } else {
+                y--;
+            }
+
+            p += twoDy1MinusDx1;
+
+            // Update x, y
+            solutionDiv.innerHTML += "<p>Update x = " + x + ", y = " + y + "</p>";
+        }
+
+        // Display the updated values in each iteration
+        solutionDiv.innerHTML += "<p>After iteration (x=" + x + "):</p>";
+        solutionDiv.innerHTML += "<p>p = " + p + "</p>";
+        solutionDiv.innerHTML += "<p>x = " + x + ", y = " + y + "</p>";
+    }
+
+    var table = "<h3>Table of Values:</h3><table>";
+    table += "<tr><th>Iteration</th><th>x</th><th>y</th><th>p</th></tr>";
+
+    x = x1;
+    y = y1;
+    p = twoDy1 - dx1;
+
+    while (x < x2) {
+        x++;
+        if (p < 0) {
+            p += twoDy1;
+        } else {
+            if (y1 < y2) {
+                y++;
+            } else {
+                y--;
+            }
+            p += twoDy1MinusDx1;
+        }
+
+        // Add row to the table
+        table += "<tr><td>" + (x - x1) + "</td><td>" + x + "</td><td>" + y + "</td><td>" + p + "</td></tr>";
+    }
+
+    // Close the table
+    table += "</table>";
+
+    // Append the table to the tableContainer div
+    document.getElementById('tableContainer').innerHTML = table;
+    // Hide the form and text after processing input
+    document.getElementById('pointForm').style.display = 'none';
+    document.getElementById('solutionSection').style.display = 'flex';
+}
+    </script>
+</body>
+</html>

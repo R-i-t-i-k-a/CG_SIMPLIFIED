@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bresenham's Line Drawing Algorithm</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+           min-height: 100vh;
+
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+            display: block;
+            
+        }
+
+        label {
+            display: inline-block;
+            width: 70px;
+        }
+
+        input {
+            width: 50px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #17479f;
+        }
+
+        #solutionSection {
+            display: none;
+            margin-left: 70px;
+            margin-top: 20px;
+        }
+
+        #solution {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            margin-right: 30px;
+            margin-top: 3vh;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin-top: 3vh;
+        }
+
+        th, td {
+            border: 3px solid #466baf;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #c5d4f1;
+            color: rgb(0, 0, 0);
+        }
+    </style>
+</head>
+<body>
+    <form id="pointForm">
+        <h2>Enter the center and radius of the circle</h2>
+        <label for="radiusX">RadiusX:</label>
+        <input type="number" id="radiusX" required>
+        <br>
+        <label for="radiusY">RadiusY:</label>
+        <input type="number" id="radiusY" required>
+        <br>
+        <button type="button" onclick="showSolution()">Show Solution</button>
+    </form>
+
+    <div id="solutionSection">
+        <div id="solution"></div>
+        <div id="tableContainer"></div>
+    </div>
+    
+    <script>
+       function showSolution() {
+    // Get input values
+    var centerX = 0; // default center X coordinate
+    var centerY = 0; // default center Y coordinate
+    var radiusX = parseInt(document.getElementById('radiusX').value);
+    var radiusY = parseInt(document.getElementById('radiusY').value);
+
+    // Midpoint Ellipse Drawing Algorithm
+    var x = 0;
+    var y = radiusY;
+    var p1 = Math.pow(radiusY, 2) - Math.pow(radiusX, 2) * radiusY + 0.25 * Math.pow(radiusX, 2);
+    var dx = 2 * Math.pow(radiusY, 2) * x;
+    var dy = 2 * Math.pow(radiusX, 2) * y;
+
+    // Display the solution
+    var solutionDiv = document.getElementById('solution');
+    solutionDiv.innerHTML = "<h3>Midpoint Ellipse Drawing Algorithm Solution:</h3>";
+    solutionDiv.innerHTML += "<p>Given input: Center (" + centerX + ", " + centerY + ") and Radii " + radiusX + " and " + radiusY + "</p>";
+
+    // Initialize the loop
+    solutionDiv.innerHTML += "<p>Initialize parameters:</p>";
+    solutionDiv.innerHTML += "<p>p1 = radiusY<sup>2</sup> - radiusX<sup>2</sup> * radiusY + radiusX<sup>2</sup>/4 = " + p1 + "</p>";
+    solutionDiv.innerHTML += "<p>x = " + x + ", y = radiusY = " + y + "</p>";
+    solutionDiv.innerHTML += "<p>dx = 2 * radiusY<sup>2</sup> * x = "+dx+"</p>";
+    solutionDiv.innerHTML += "<p>dy = 2 * radiusX<sup>2</sup> * y = "+dy+"</p>";
+
+    var table = "<h3>Table for Specific Question:</h3><table>";
+    table += "<tr><th>Pk</th><th>Octant-1(X, Y)</th><th>Octant-2(Y, X)</th><th>Octant-3(Y, -X)</th><th>Octant-4(X, -Y)</th></tr>";
+
+    // Continue the loop
+    while (dx <= dy) {
+        // Display the updated values in each iteration
+        table += "<tr><td>"+p1+"</td><td>(" + (x + centerX) + ", " + (y + centerY) + ")</td><td>(" + (y + centerX) + ", " + (x + centerY) + ")</td><td>(" + (y + centerX) + ", " + (-x + centerY) + ")</td><td>(" + (x + centerX) + ", " + (-y + centerY) + ")</td></tr>";
+        solutionDiv.innerHTML += "<p>After iteration (x=" + x + "):</p>";
+        solutionDiv.innerHTML += "<p>p1 = " + p1 + "</p>";
+        solutionDiv.innerHTML += "<p>x = " + (x + centerX) + ", y = " + (y + centerY) + "</p>";
+
+        // Update the table for specific question
+        x++;
+
+        if (p1 < 0) {
+            dx = dx + 2 * Math.pow(radiusY, 2);
+            p1 = p1 + dx + Math.pow(radiusY, 2);
+            solutionDiv.innerHTML += "<hr>";
+            solutionDiv.innerHTML+="<p>Since p1<0 </p> : p1 = p1 + dx + radiusY<sup>2</sup> = "+p1;
+        } else {
+            y--;
+            dy = dy - 2 * Math.pow(radiusX, 2);
+            dx = dx + 2 * Math.pow(radiusY, 2);
+            p1 = p1 + dx - dy + Math.pow(radiusY, 2);
+            if(dx>dy){
+                break;
+            }
+            solutionDiv.innerHTML += "<hr>";
+            solutionDiv.innerHTML+="<p>Since p1<0 </p> : p1 = p1 + dx - dy + radiusY<sup>2</sup> = "+p1;
+        }
+    }
+
+    if(dx>=dy){
+        solutionDiv.innerHTML += "<hr>";
+        solutionDiv.innerHTML+="Since dx >= dy we stop the iteration for p1";
+    }
+
+    var p2 = Math.pow(radiusY, 2) * Math.pow(x + 0.5, 2) + Math.pow(radiusX, 2) * Math.pow(y - 1, 2) - Math.pow(radiusX * radiusY, 2);
+    solutionDiv.innerHTML += "<hr>";
+    solutionDiv.innerHTML += "<p>p2 = radiusY<sup>2</sup> * (x+0.5)<sup>2</sup> + radiusX<sup>2</sup> * (y-1)<sup>2</sup> - (radiusY*radiusX)<sup>2</sup> = " + p2 + "</p>";
+
+    while (y >= 0) {
+        // Display the updated values in each iteration
+        table += "<tr><td>"+p2+"</td><td>(" + (x + centerX) + ", " + (y + centerY) + ")</td><td>(" + (y + centerX) + ", " + (x + centerY) + ")</td><td>(" + (y + centerX) + ", " + (-x + centerY) + ")</td><td>(" + (x + centerX) + ", " + (-y + centerY) + ")</td></tr>";
+        solutionDiv.innerHTML += "<p>After iteration (y=" + y + "):</p>";
+        solutionDiv.innerHTML += "<p>p2 = " + p2 + "</p>";
+        solutionDiv.innerHTML += "<p>x = " + (x + centerX) + ", y = " + (y + centerY) + "</p>";
+
+        // Update the table for specific question
+        y--;
+
+        if (p2 > 0) {
+            dy = dy - 2 * Math.pow(radiusX, 2);
+            p2 = p2 + Math.pow(radiusX, 2) - dy;
+            solutionDiv.innerHTML += "<hr>";
+            solutionDiv.innerHTML += "<p>Since p2>0 </p> : p2 = p2 + radiusX<sup>2</sup> - dy";
+        } else {
+            x++;
+            dx = dx + 2 * Math.pow(radiusY, 2);
+            dy = dy - 2 * Math.pow(radiusX, 2);
+            p2 = p2 + dx - dy + Math.pow(radiusX, 2);
+            if(y<0){
+                break;
+            }
+            solutionDiv.innerHTML += "<hr>";
+            solutionDiv.innerHTML += "<p>Since p2>0 </p> : p2 = p2 + radiusX<sup>2</sup> + dx - dy";
+
+        }
+    }
+
+    if(y<=0){
+        solutionDiv.innerHTML += "<hr>";
+        solutionDiv.innerHTML+="Since y <= 0 we stop the iteration for p2";
+        // Close the table
+        table += "</table>";
+    }
+
+    // Append the table to the tableContainer div
+    document.getElementById('tableContainer').innerHTML = table;
+    // Hide the form and text after processing input
+    document.getElementById('pointForm').style.display = 'none';
+    document.getElementById('solutionSection').style.display = 'flex';
+}
+
+    </script>
+</body>
+</html>

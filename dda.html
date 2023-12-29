@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDA Line Drawing Algorithm</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+            display: block;
+        }
+
+        label {
+            display: inline-block;
+            width: 30px;
+        }
+
+        input {
+            width: 60px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #17479f;
+        }
+
+        #solutionSection {
+            display: none;
+        }
+
+        #solution {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            margin-right: 20px;
+            margin-top: 50px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #466baf;
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #c5d4f1;
+            color: rgb(0, 0, 0);
+        }
+    </style>
+</head>
+<body>
+    <form id="pointForm">
+        <h2>Enter the coordinates of two points (x1, y1) and (x2, y2)</h2>
+        <label for="x1">x1:</label>
+        <input type="number" id="x1" required>
+        <br>
+        <label for="y1">y1:</label>
+        <input type="number" id="y1" required>
+        <br>
+        <label for="x2">x2:</label>
+        <input type="number" id="x2" required>
+        <br>
+        <label for="y2">y2:</label>
+        <input type="number" id="y2" required>
+        <br>
+        <button type="button" onclick="showDDASolution()">Show Solution</button>
+    </form>
+
+    <div id="solutionSection">
+        <div id="solution"></div>
+        <div id="tableContainer"></div>
+    </div>
+
+    <script>
+        function showDDASolution() {
+    // Get input values
+    var x1 = parseInt(document.getElementById('x1').value);
+    var y1 = parseInt(document.getElementById('y1').value);
+    var x2 = parseInt(document.getElementById('x2').value);
+    var y2 = parseInt(document.getElementById('y2').value);
+
+    // DDA Line Drawing Algorithm
+    var dx = x2 - x1;
+    var dy = y2 - y1;
+    var steps = Math.max(Math.abs(dx), Math.abs(dy));
+
+    var xIncrement = dx / steps;
+    var yIncrement = dy / steps;
+
+    // Display the solution
+    var solutionDiv = document.getElementById('solution');
+    solutionDiv.innerHTML = "<h3>DDA Line Drawing Algorithm Solution:</h3>";
+    solutionDiv.innerHTML += "<p>Given input points: (" + x1 + ", " + y1 + ") and (" + x2 + ", " + y2 + ")</p>";
+    solutionDiv.innerHTML += "<p>Calculate dx = " + dx + ", dy = " + dy + "</p>";
+    solutionDiv.innerHTML += "<p>Number of steps = " + steps + "</p>";
+    solutionDiv.innerHTML += "<p>Calculate x increment = " + xIncrement + ", y increment = " + yIncrement + "</p>";
+
+    // Initialize the loop
+    solutionDiv.innerHTML += "<p>Initialize parameters:</p>";
+    solutionDiv.innerHTML += "<p>x = " + x1 + ", y = " + y1 + "</p>";
+
+    // Continue the loop
+    for (let i = 0; i < steps; i++) {
+        x1 += xIncrement;
+        y1 += yIncrement;
+
+        // Display the updated values in each iteration
+        solutionDiv.innerHTML += "<hr>";
+        solutionDiv.innerHTML += "<p>After iteration " + (i + 1) + ":</p>";
+        solutionDiv.innerHTML += "<p>x = " + Math.round(x1) + ", y = " + Math.round(y1) + "</p>";
+    }
+
+    // Create the table
+    var table = "<h3>Table of Values:</h3><table>";
+    table += "<tr><th>Iteration</th><th>x</th><th>y</th></tr>";
+
+    // Reset parameters
+    x1 = parseInt(document.getElementById('x1').value);
+    y1 = parseInt(document.getElementById('y1').value);
+    xIncrement = dx / steps;
+    yIncrement = dy / steps;
+
+    // Continue the loop and populate the table
+    for (let i = 0; i < steps; i++) {
+        x1 += xIncrement;
+        y1 += yIncrement;
+
+        // Add row to the table
+        table += "<tr><td>" + (i + 1) + "</td><td>" + Math.round(x1) + "</td><td>" + Math.round(y1) + "</td></tr>";
+    }
+
+    // Close the table
+    table += "</table>";
+
+    // Append the table to the tableContainer div
+    document.getElementById('tableContainer').innerHTML = table;
+    // Hide the form and text after processing input
+    document.getElementById('pointForm').style.display = 'none';
+    document.getElementById('solutionSection').style.display = 'flex';
+}
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mid-Point Circle Drawing Algorithm</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+            display: block;
+            
+        }
+
+        label {
+            display: inline-block;
+            width: 70px;
+        }
+
+        input {
+            width: 50px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #17479f;
+        }
+
+        #solutionSection {
+            display: none;
+            margin-left: 70px;
+            margin-top: 20px;
+        }
+   #tableContainer
+   {
+    margin-top: 300px;
+    margin-left: 50px;
+}
+
+table {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-collapse: collapse;
+        width: 40%;
+        margin-top: -37vh; /* Adjusted margin-top value using viewport height unit */
+    }
+        #solution {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            margin-right: 50px;
+            margin-top: 5vh;
+            width: 50%;
+        }
+
+        th, td {
+            border: 3px solid #466baf;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #c5d4f1;
+            color: rgb(0, 0, 0);
+        }
+    </style>
+</head>
+<body>
+    <form id="pointForm">
+        <h2>Enter the center and radius of the circle</h2>
+        <label for="centerX">Center X:</label>
+        <input type="number" id="centerX" required>
+        <br>
+        <label for="centerY">Center Y:</label>
+        <input type="number" id="centerY" required>
+        <br>
+        <label for="radius">Radius:</label>
+        <input type="number" id="radius" required>
+        <br>
+        <button type="button" onclick="showSolution()">Show Solution</button>
+    </form>
+
+    <div id="solutionSection">
+        <div id="solution"></div>
+        <div id="tableContainer"></div>
+    </div>
+
+    <script>
+       function showSolution() {
+    // Get input values
+    var centerX = 0; // default center X coordinate
+    var centerY = 0; // default center Y coordinate
+    var radius = parseInt(document.getElementById('radius').value);
+
+    // Bresenham's Circle Drawing Algorithm
+    var x = 0;
+    var y = radius;
+    var p = 1 - radius;
+
+    // Display the solution
+    var solutionDiv = document.getElementById('solution');
+    solutionDiv.innerHTML = "<h3>Midpoint Circle Drawing Algorithm Solution:</h3>";
+    solutionDiv.innerHTML += "<p>Given input: Center (" + centerX + ", " + centerY + ") and Radius " + radius + "</p>";
+
+    // Initialize the loop
+    solutionDiv.innerHTML += "<p>Initialize parameters:</p>";
+    solutionDiv.innerHTML += "<p>p = 1 -  radius = " + p + "</p>";
+    solutionDiv.innerHTML += "<p>x = " + x + ", y = " + y + "(radius)</p>";
+
+    
+    var table = "<table>";
+    table += "<tr><th>Pk</th><th>Octant-1(X, Y)</th><th>Octant-2(Y, X)</th><th>Octant-3(Y, -X)</th><th>Octant-4(X, -Y)</th><th>Octant-5(-X, -Y)</th><th>Octant-6(-Y,-X)</th><th>Octant-7(-Y, X)</th><th>Octant-8(-X, Y)</th></tr>";
+
+    // Continue the loop
+    while (x <= y) {
+        // Display the updated values in each iteration
+        table += "<tr><td>"+p+"</td><td>(" + (x) + ", " + (y) + ")</td><td>(" + (y) + ", " + (x) + ")</td><td>(" + (y) + ", " + (-x) + ")</td><td>(" + (x) + ", " + (-y) + ")</td><td>(" + (-x) + ", " + (-y) + ")</td><td>(" + (-y) + ", " + (-x) + ")</td><td>(" + (-y) + ", " + (x) + ")</td><td>(" + (-x) + ", " + (y) + ")</td></tr>";
+        solutionDiv.innerHTML += "<p>After iteration (x=" + x + "):</p>";
+        solutionDiv.innerHTML += "<p>p = " + p + "</p>";
+        solutionDiv.innerHTML += "<p>x = " + x + ", y = " + y + "</p>";
+
+        // Update the table for specific question
+        x++;
+
+        if (p < 0) {
+            p = p + 2 * x + 1;
+            solutionDiv.innerHTML += "<hr>";
+            solutionDiv.innerHTML+="<p>Since p<0 </p> : p = p + 2 * x + 1 = "+ p;
+        } else {
+            y--;
+            if(x>y){
+                break;
+            }
+            p = p + 2 * (x - y) + 1;
+            solutionDiv.innerHTML += "<hr>";
+            solutionDiv.innerHTML+="<p>Since p>=0 </p> : p = p + 2 * (x - y) + 1 = "+ p;
+        }
+    }
+    if(x>=y){
+        solutionDiv.innerHTML += "<hr>";
+        solutionDiv.innerHTML+="Since x >= y we stop the iteration";
+        // Close the table
+        table += "</table>";
+    }
+
+    // Append the table to the tableContainer div
+    document.getElementById('tableContainer').innerHTML = table;
+    // Hide the form and text after processing input
+    document.getElementById('pointForm').style.display = 'none';
+    document.getElementById('solutionSection').style.display = 'flex';
+}
+    </script>
+</body>
+</html>

@@ -46,9 +46,11 @@ function closeModal(modalId) {
   var modal = document.getElementById("modal" + modalId);
   var overlay = document.querySelector(".overlay");
 
+  
   modal.style.display = "none";
   overlay.style.display = "none";
 }
+
 
 
  

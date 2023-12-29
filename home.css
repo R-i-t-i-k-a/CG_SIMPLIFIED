@@ -1,91 +1,96 @@
-/* body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  
 }
 
-.navbar {
-    background-color: #333;
-    color: white;
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+
+
+.navbar-inverse {
+  background-color: #208bee;
+
+   padding: 15px;
 }
 
-.logo {
-    font-size: 1.5em;
+.navbar-inverse .navbar-nav > li > a {
+  color: white; 
 }
 
-.nav-links a {
-    color: white;
-    text-decoration: none;
-    margin: 0 15px;
+.navbar-inverse .navbar-nav > li > a:hover,
+.navbar-inverse .navbar-nav > li.active > a {
+  background-color: #2f3c4d; 
 }
 
-.dropdown {
-    display: inline-block;
+.navbar-inverse .navbar-nav .dropdown-menu > li > a {
+  color: #2f3c4d; 
 }
 
-.dropbtn {
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
+.navbar-inverse .navbar-nav .dropdown-menu > li > a:hover {
+  background-color: #2f3c4d; 
+  color: white;
 }
 
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #333;
-    min-width: 160px;
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-    z-index: 1;
+.navbar-inverse .navbar-brand {
+  color: white; /* Set text color for the brand/logo */
 }
 
-.dropdown-content a {
-    color: white;
-    padding: 12px 16px;
-    display: block;
-    text-decoration: none;
+.navbar-inverse .navbar-brand:hover {
+  color: #2f3c4d; /* Set text color for the brand/logo on hover */
 }
 
-.dropdown-content a:hover {
-    background-color: #555;
+.navbar-inverse .navbar-form .form-control {
+  color: #2f3c4d; /* Set text color for the search input */
 }
 
-.search-icon img {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
+.navbar-inverse .navbar-form .input-group-addon {
+  background-color: #2f3c4d; /* Set background color for the search button */
+  border-color: #2f3c4d; /* Set border color for the search button */
+  color: white; /* Set text color for the search button */
 }
 
-.search-bar {
-    display: none;
+.navbar-inverse .navbar-form .input-group-addon:hover {
+  background-color: black; /* Set background color for the search button on hover */
+  border-color: #2f3c4d; /* Set border color for the search button on hover */
 }
 
-.search-bar input {
-    padding: 5px;
+
+.container-fluid {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
+
+
 
 .content {
-    padding: 20px;
-} */
+  flex: 1;
+}
 
-
-
+.footer {
+  background-color: #208bee;
+  color: white;
+  padding: 15px 0;
+}
 
 .list-group{
-	width: 400px !important;
-
+	width: 1500px !important;
+  margin-left: 5px;
+  margin-right: 5px;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-template-rows: auto auto auto;
+  gap: 10px 20px;
+  padding: 10px;
+  /* grid-column-start: 1;
+  grid-column-end: 3; */
 }
 
 .list-group-item{
 	margin-top:10px;
 	border-radius: none; 
-	background: #5E35B1;
+	background: #2f3c4d;
+  color: white;
 	cursor: pointer;
 	transition: all 0.3s ease-in-out;
 }
@@ -101,14 +106,7 @@
 
 }
 
-
- 
-/* modal css */
-
-/* Your existing CSS styles */
-
-/* Additional styles for the modal and overlay */
-.modal {
+/* .modal {
     color: white;
     position: fixed;
     top: 50%;
@@ -116,15 +114,36 @@
     transform: translate(-50%, -50%);
     border: 2px solid #ffffff59;
     width: 500px;
-    background: #00000088;
+    background: #000000b1;
     padding: 20px 25px;
     border-radius: 20px;
-    transition: 0.5s ease-in-out;
-    backdrop-filter: blur(10px);
+    transition: 0.8s ease-in-out;
+    backdrop-filter: blur(15px);
     z-index: 1;
     display: none; /* Initially hidden */
-}
 
+    .modal {
+      color: white;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 2px solid #ffffff59;
+      width: 500px;
+      background: #000000b1;
+      padding: 20px 25px;
+      border-radius: 20px;
+      transition: opacity 0.5s, transform 0.5s; /* Added transition property for opacity and transform */
+      backdrop-filter: blur(15px);
+      z-index: 1;
+      display: none; /* Initially hidden */
+  }
+  
+  .modal.active {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1); /* Scale up when active */
+  }
+  
 .modalHeader {
     display: flex;
     flex-direction: row;
@@ -139,7 +158,9 @@
     font-size: 30px;
     cursor: pointer;
 }
-
+.close{
+  color: rgb(225, 225, 225);
+}
 .overlay {
     position: fixed;
     background-color: rgba(226, 222, 222, 0.514);
@@ -149,7 +170,7 @@
     left: 0;
     right: 0;
     pointer-events: none;
-    transition: 0.5s ease-in-out;
+    transition: 0.8s ease-in-out;
     display: none; /* Initially hidden */
 }
 
@@ -157,35 +178,11 @@
     opacity: 1;
     pointer-events: initial;
 }
+body.modal-opened {
+  filter: blur(5px); /* Adjust the blur intensity as needed */
+}
 
-/* 
-.modal {
-    color: white;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    translate: -50% -50%;
-    border: 2px solid #ffffff59;
-    width: 500px;
-    scale: 0;
-    background: #00000088;
-    padding: 20px 25px;
-    border-radius: 20px;
-    transition: 0.5s ease-in-out;
-    backdrop-filter: blur(10px);
-    z-index: 1;
-  }
-  
-  .modalHeader{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #ffffff88;
-  }
-   */
+
   .modalHeader div i{
     font-size: 30px;
     cursor: pointer;
@@ -200,10 +197,10 @@
   }
   
   .icon{  
-    padding: 17px;
+    padding: 30px;
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    width: 50px;
+    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -216,15 +213,15 @@
   }
   
   .icon i {
-    font-size: 27px;
+    font-size: 37px;
   }
   
   #facebook {
-    color: #1771e6;
-    border: 1px solid #1771e6;
+    color: #208bee;
+    border: 1px solid #208bee;
   }
   #facebook:hover {
-    background-color: #1771e6;
+    background-color: #208bee;
     color: #fff;
   }
   
