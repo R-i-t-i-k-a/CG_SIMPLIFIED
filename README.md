@@ -41,9 +41,7 @@ To run this project locally, follow these steps:
    ```bash
    git clone [repository-url]
    ```
-
 2. Open the project folder in a code editor of your choice.
-
 3. Open the `index.html` file in a web browser.
 
 ## Dependencies
@@ -62,7 +60,7 @@ Contributions to this project are welcome. If you find any issues or have sugges
 
 ## Future Development
 
-The project is still in development, and additional features and improvements are planned. Contributions from the community are highly appreciated.
+The project is still in development, and additional features and improvements are planned like developing it in React.js. Contributions from the community are highly appreciated.
 
 ## User Input and Solutions
 
